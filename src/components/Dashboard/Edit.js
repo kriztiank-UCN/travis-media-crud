@@ -1,25 +1,28 @@
-import React, { useState } from 'react';
-import Swal from 'sweetalert2';
+import React, { useState } from "react"
+import Swal from "sweetalert2"
 
-const Edit = ({ employees, selectedEmployee, setEmployees, setIsEditing }) => {
-  const id = selectedEmployee.id;
+import { doc, setDoc } from "firebase/firestore"
+import { db } from "../../config/firestore"
 
-  const [firstName, setFirstName] = useState(selectedEmployee.firstName);
-  const [lastName, setLastName] = useState(selectedEmployee.lastName);
-  const [email, setEmail] = useState(selectedEmployee.email);
-  const [salary, setSalary] = useState(selectedEmployee.salary);
-  const [date, setDate] = useState(selectedEmployee.date);
+const Edit = ({ employees, selectedEmployee, setEmployees, setIsEditing, getEmployees }) => {
+  const id = selectedEmployee.id
 
-  const handleUpdate = e => {
-    e.preventDefault();
+  const [firstName, setFirstName] = useState(selectedEmployee.firstName)
+  const [lastName, setLastName] = useState(selectedEmployee.lastName)
+  const [email, setEmail] = useState(selectedEmployee.email)
+  const [salary, setSalary] = useState(selectedEmployee.salary)
+  const [date, setDate] = useState(selectedEmployee.date)
+
+  const handleUpdate = async e => {
+    e.preventDefault()
 
     if (!firstName || !lastName || !email || !salary || !date) {
       return Swal.fire({
-        icon: 'error',
-        title: 'Error!',
-        text: 'All fields are required.',
+        icon: "error",
+        title: "Error!",
+        text: "All fields are required.",
         showConfirmButton: true,
-      });
+      })
     }
 
     const employee = {
@@ -29,21 +32,29 @@ const Edit = ({ employees, selectedEmployee, setEmployees, setIsEditing }) => {
       email,
       salary,
       date,
-    };
+    }
 
-    // TODO: Update document
+    // Update document
+    // Add a new document in collection "employees"
+    await setDoc(doc(db, "employees", id), {
+      ...employee,
+    })
 
-    setEmployees(employees);
-    setIsEditing(false);
+    // update the state
+    setEmployees(employees)
+    // close the popup
+    setIsEditing(false)
+    // refresh the data
+    getEmployees()
 
     Swal.fire({
-      icon: 'success',
-      title: 'Updated!',
+      icon: "success",
+      title: "Updated!",
       text: `${employee.firstName} ${employee.lastName}'s data has been updated.`,
       showConfirmButton: false,
       timer: 1500,
-    });
-  };
+    })
+  }
 
   return (
     <div className="small-container">
@@ -89,10 +100,10 @@ const Edit = ({ employees, selectedEmployee, setEmployees, setIsEditing }) => {
           value={date}
           onChange={e => setDate(e.target.value)}
         />
-        <div style={{ marginTop: '30px' }}>
+        <div style={{ marginTop: "30px" }}>
           <input type="submit" value="Update" />
           <input
-            style={{ marginLeft: '12px' }}
+            style={{ marginLeft: "12px" }}
             className="muted-button"
             type="button"
             value="Cancel"
@@ -101,7 +112,7 @@ const Edit = ({ employees, selectedEmployee, setEmployees, setIsEditing }) => {
         </div>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default Edit;
+export default Edit
