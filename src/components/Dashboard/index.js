@@ -7,7 +7,7 @@ import Add from "./Add"
 import Edit from "./Edit"
 
 // import { employeesData } from '../../data';
-import { collection, getDocs } from "firebase/firestore"
+import { collection, getDocs,  doc, deleteDoc } from "firebase/firestore"
 import { db } from "../../config/firestore"
 
 const Dashboard = ({ setIsAuthenticated }) => {
@@ -34,7 +34,7 @@ const Dashboard = ({ setIsAuthenticated }) => {
     setSelectedEmployee(employee)
     setIsEditing(true)
   }
-
+  // the delete button in Table.js calls the handleDelete function and the id is passed with it
   const handleDelete = id => {
     Swal.fire({
       icon: "warning",
@@ -47,7 +47,10 @@ const Dashboard = ({ setIsAuthenticated }) => {
       if (result.value) {
         const [employee] = employees.filter(employee => employee.id === id)
 
+        // https://firebase.google.com/docs/firestore/manage-data/delete-data
         // TODO delete document
+        // use the id passed from the delete button to delete the document
+        deleteDoc(doc(db, "employees", id));
 
         Swal.fire({
           icon: "success",

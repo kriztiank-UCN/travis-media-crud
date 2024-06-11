@@ -1,12 +1,11 @@
-import React from 'react';
+import React from "react"
 
 const Table = ({ employees, handleEdit, handleDelete }) => {
-
-  const formatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
+  const formatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
     minimumFractionDigits: null,
-  });
+  })
 
   return (
     <div className="contain-table">
@@ -35,15 +34,13 @@ const Table = ({ employees, handleEdit, handleDelete }) => {
                 <td>{formatter.format(employee.salary)}</td>
                 <td>{employee.date} </td>
                 <td className="text-right">
-                  <button
-                    onClick={() => handleEdit(employee.id)}
-                    className="button muted-button"
-                  >
+                  <button onClick={() => handleEdit(employee.id)} className="button muted-button">
                     Edit
                   </button>
                 </td>
                 <td className="text-left">
                   <button
+                    // handleDelete is called the id is passed with it
                     onClick={() => handleDelete(employee.id)}
                     className="button muted-button"
                   >
@@ -60,7 +57,7 @@ const Table = ({ employees, handleEdit, handleDelete }) => {
         </tbody>
       </table>
     </div>
-  );
-};
+  )
+}
 
-export default Table;
+export default Table
