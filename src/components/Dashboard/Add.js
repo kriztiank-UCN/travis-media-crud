@@ -1,23 +1,26 @@
-import React, { useState } from 'react';
-import Swal from 'sweetalert2';
+import React, { useState } from "react"
+import Swal from "sweetalert2"
 
-const Add = ({ employees, setEmployees, setIsAdding }) => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [salary, setSalary] = useState('');
-  const [date, setDate] = useState('');
+import { collection, addDoc } from "firebase/firestore"
+import { db } from "../../config/firestore"
+// pull in functions passed from other components
+const Add = ({ employees, setEmployees, setIsAdding, getEmployees }) => {
+  const [firstName, setFirstName] = useState("")
+  const [lastName, setLastName] = useState("")
+  const [email, setEmail] = useState("")
+  const [salary, setSalary] = useState("")
+  const [date, setDate] = useState("")
 
-  const handleAdd = e => {
-    e.preventDefault();
+  const handleAdd = async e => {
+    e.preventDefault()
 
     if (!firstName || !lastName || !email || !salary || !date) {
       return Swal.fire({
-        icon: 'error',
-        title: 'Error!',
-        text: 'All fields are required.',
+        icon: "error",
+        title: "Error!",
+        text: "All fields are required.",
         showConfirmButton: true,
-      });
+      })
     }
 
     const newEmployee = {
@@ -26,23 +29,33 @@ const Add = ({ employees, setEmployees, setIsAdding }) => {
       email,
       salary,
       date,
-    };
+    }
 
-    employees.push(newEmployee);
+    employees.push(newEmployee)
 
-    // TODO: Add doc to DB
-
-    setEmployees(employees);
-    setIsAdding(false);
+    // Add a new document with a generated id.
+    try {
+      await addDoc(collection(db, "employees"), {
+        ...newEmployee
+      })
+    } catch (error) {
+      console.log(error);
+    }
+    // update the state
+    setEmployees(employees)
+    // close the popup
+    setIsAdding(false)
+    // refresh the data
+    getEmployees()
 
     Swal.fire({
-      icon: 'success',
-      title: 'Added!',
+      icon: "success",
+      title: "Added!",
       text: `${firstName} ${lastName}'s data has been Added.`,
       showConfirmButton: false,
       timer: 1500,
-    });
-  };
+    })
+  }
 
   return (
     <div className="small-container">
@@ -88,10 +101,10 @@ const Add = ({ employees, setEmployees, setIsAdding }) => {
           value={date}
           onChange={e => setDate(e.target.value)}
         />
-        <div style={{ marginTop: '30px' }}>
+        <div style={{ marginTop: "30px" }}>
           <input type="submit" value="Add" />
           <input
-            style={{ marginLeft: '12px' }}
+            style={{ marginLeft: "12px" }}
             className="muted-button"
             type="button"
             value="Cancel"
@@ -100,7 +113,7 @@ const Add = ({ employees, setEmployees, setIsAdding }) => {
         </div>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default Add;
+export default Add

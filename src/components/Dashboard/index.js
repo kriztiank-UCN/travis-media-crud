@@ -16,10 +16,10 @@ const Dashboard = ({ setIsAuthenticated }) => {
   const [isAdding, setIsAdding] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
 
+  // https://firebase.google.com/docs/firestore/query-data/get-data#get_all_documents_in_a_collection
   const getEmployees = async () => {
     const querySnapshot = await getDocs(collection(db, "employees"))
     const employees = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-
     setEmployees(employees)
   }
 
@@ -72,7 +72,13 @@ const Dashboard = ({ setIsAuthenticated }) => {
         </>
       )}
       {isAdding && (
-        <Add employees={employees} setEmployees={setEmployees} setIsAdding={setIsAdding} />
+        <Add
+          employees={employees}
+          setEmployees={setEmployees}
+          setIsAdding={setIsAdding}
+          // pass getEmployees function to Add component
+          getEmployees={getEmployees}
+        />
       )}
       {isEditing && (
         <Edit
